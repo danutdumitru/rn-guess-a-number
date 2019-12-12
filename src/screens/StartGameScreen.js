@@ -6,10 +6,11 @@ import {
   Keyboard,
   Alert
 } from "react-native";
-import { Title, Button, Text } from "react-native-paper";
+import { Title, Button } from "react-native-paper";
 import SimpleCard from "../components/SimpleCard";
 import Input from "../components/Input";
 import SelectedNumber from "../components/SelectedNumber";
+import Screen from "./Screen";
 
 const StartGameScreen = props => {
   const [enteredValue, setEnteredValue] = useState("");
@@ -40,11 +41,16 @@ const StartGameScreen = props => {
   };
   let confirmCard = null;
   if (confirmed) {
-    confirmCard = <SelectedNumber selectedNumber={enteredNumber} />;
+    confirmCard = (
+      <SelectedNumber
+        selectedNumber={enteredNumber}
+        onStartPress={props.onStartPress}
+      />
+    );
   }
   return (
     <TouchableWithoutFeedback onPress={onCardOutsidePress}>
-      <View style={styles.screen}>
+      <Screen>
         <Title
           style={{
             alignSelf: "center",
@@ -81,16 +87,12 @@ const StartGameScreen = props => {
           </View>
         </SimpleCard>
         {confirmCard}
-      </View>
+      </Screen>
     </TouchableWithoutFeedback>
   );
 };
 
 const styles = StyleSheet.create({
-  screen: {
-    marginTop: 10,
-    marginHorizontal: 8
-  },
   buttonsContainer: {
     flexDirection: "row",
     justifyContent: "center",

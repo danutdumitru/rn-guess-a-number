@@ -1,27 +1,72 @@
-import { View } from "react-native";
-import { Title, Button } from "react-native-paper";
-import React, { useState } from "react";
+import { View, Alert } from "react-native";
+import { Title, Button, Text } from "react-native-paper";
+import React, { useState, useEffect } from "react";
+import PropTypes from "prop-types";
+
 import NumberGenerator from "../utils/NumberGenerator";
+import SimpleCard from "../components/SimpleCard";
+import Screen from "./Screen";
 
 const MAX_VALUE = 100;
 const MIN_VALUE = 1;
 
+const getNewNumber = (minValue, maxValue) => {
+  const numberGenerator = new NumberGenerator(minValue, maxValue);
+  return numberGenerator.getRandomNumber().numberValue;
+};
+
 const GameScreen = props => {
-  const [guessedNumber, setGuessedNumber] = useState(
-    new NumberGenerator(MAX_VALUE).number );
+  const [state, setState] = useState({
+    minValue: MIN_VALUE,
+    maxValue: MAX_VALUE,
+    guessedNumber: getNewNumber(MIN_VALUE, MAX_VALUE)
+  });
+
+  useEffect(() => {
+    if (state.guessedNumber === props.chosenNumber) {
+      props.onNumberFound();
+    }
+  }, [state.guessedNumber]);
+
   const onTooHighButtonPress = () => {
-    setGuessedNumber(prevValue => {
-      return new NumberGenerator(MAX_VALUE, prevValue).guessLower().number;
-    });
+    if (state.guessedNumber <= props.chosenNumber) {
+      Alert.alert("Wrong", "Please don't lie...", [
+        { text: "Ok", style: "default" }
+      ]);
+    } else {
+      setState(prevState => {
+        const newMaxValue = prevState.guessedNumber;
+        return {
+          ...prevState,
+          maxValue: newMaxValue,
+          guessedNumber: getNewNumber(prevState.minValue, newMaxValue)
+        };
+      });
+    }
   };
+
   const onTooLowButtonPress = () => {
-    setGuessedNumber(prevValue => {
-      return new NumberGenerator(MAX_VALUE, prevValue).guessHigher().number;
-    });
+    if (state.guessedNumber >= props.chosenNumber) {
+      Alert.alert("Wrong", "Please don't lie...", [
+        { text: "Ok", style: "default" }
+      ]);
+    } else {
+      setState(prevState => {
+        const newMinValue = prevState.guessedNumber + 1;
+        return {
+          ...prevState,
+          minValue: newMinValue,
+          guessedNumber: getNewNumber(newMinValue, prevState.maxValue)
+        };
+      });
+    }
   };
   return (
-    <View>
-      <Title>The current number is: {guessedNumber}</Title>
+    <Screen>
+      <Title style={{ alignSelf: "center" }}>Opponnent Number</Title>
+      <SimpleCard styles={{ width: "50%" }}>
+        <Text style={{ alignSelf: "center" }}>{state.guessedNumber}</Text>
+      </SimpleCard>
       <View style={{ flexDirection: "row" }}>
         <Button
           mode="outlined"
@@ -38,8 +83,13 @@ const GameScreen = props => {
           Too low
         </Button>
       </View>
-    </View>
+    </Screen>
   );
+};
+
+GameScreen.propTypes = {
+  chosenNumber: PropTypes.number.isRequired,
+  onNumberFound: PropTypes.func.isRequired
 };
 
 export default GameScreen;

@@ -1,21 +1,13 @@
 class NumberGenerator {
-    constructor(maxValue, number) {
+    constructor(minValue, maxValue) {
+        this.minValue = minValue;
         this.maxValue = maxValue;
-        this.number = number? number: Math.floor(Math.random() * maxValue);
-        console.log('New number: ', this.number);
-    } 
-
-    guessHigher() {
-        const newValue = Math.floor(Math.random() * (this.maxValue - this.number)) + this.number ;
-        this.number = newValue;
-        console.log('New number: ', this.number);
-        return this;
+        this.numberValue = null;
     }
 
-    guessLower() {
-        const newValue = Math.floor(Math.random() * this.number);
-        this.number = newValue;
-        console.log('New number: ', this.number);
+    getRandomNumber() {
+        const newNumber = Math.floor(Math.random() * (this.maxValue - this.minValue)) + this.minValue;
+        this.numberValue = newNumber;
         return this;
     }
 

@@ -6,6 +6,9 @@ import PropTypes from "prop-types";
 
 const SelectedNumber = props => {
   if (!props.selectedNumber) return null;
+  const onStartButtonPress = () => {
+    props.onStartPress(props.selectedNumber);
+  }
 
   return (
     <SimpleCard styles={{ marginTop: 24 }}>
@@ -16,7 +19,7 @@ const SelectedNumber = props => {
         </View>
       </View>
       <View>
-        <Button mode="outlined" style={styles.button}>Start</Button>
+        <Button mode="outlined" style={styles.button} onPress={onStartButtonPress}>Start</Button>
       </View>
     </SimpleCard>
   );
@@ -42,7 +45,8 @@ const styles = StyleSheet.create({
   }
 });
 SelectedNumber.propTypes = {
-  selectedNumber: PropTypes.number
+  selectedNumber: PropTypes.number,
+  onStartPress: PropTypes.func.isRequired
 };
 
 export default SelectedNumber;
